@@ -1,4 +1,4 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.vertical;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,12 +7,14 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 
+import com.lmj.customcamera.R;
+
 /**
  * author: lmj
  * date  : 2018/3/19.
  */
 
-public class ScanRectView extends AppCompatImageView {
+public class VerticalRectView extends AppCompatImageView {
     //    角标画笔
     private Paint mHornPaint;
     //    背景画笔
@@ -40,7 +42,7 @@ public class ScanRectView extends AppCompatImageView {
     private final DisplayMetrics mMetrics;
 
 
-    public ScanRectView(Context context, AttributeSet attrs) {
+    public VerticalRectView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mMetrics = context.getResources().getDisplayMetrics();
         widthScreen = mMetrics.widthPixels;
@@ -50,8 +52,7 @@ public class ScanRectView extends AppCompatImageView {
     }
 
     private void initPaint() {
-        mTip = "对准车架号扫描";
-
+        mTip = "对准后拍摄";
         mBgPaint = new Paint();
         mBgPaint.setStyle(Paint.Style.FILL);
         mBgPaint.setColor(getResources().getColor(R.color.supply_scan_bg));
@@ -65,7 +66,7 @@ public class ScanRectView extends AppCompatImageView {
 
         mTextPaint = new Paint();
         mTextPaint.setColor(getResources().getColor(R.color.common_white));
-        mTextPaint.setTextSize(30);
+        mTextPaint.setTextSize(dip2px(15));
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         topOffset = (int) (heightScreen * topRatio);
         leftOffset = (int) (widthScreen * leftRatio);

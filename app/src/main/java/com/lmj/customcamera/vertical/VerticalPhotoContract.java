@@ -1,20 +1,23 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.vertical;
 
 import android.view.SurfaceHolder;
 import android.widget.ImageView;
+
+import com.lmj.customcamera.base.BasePresenter;
+import com.lmj.customcamera.base.BaseView;
 
 /**
  * author: lmj
  * date  : 2018/3/19.
  */
 
-public class PendingScanContract {
+public class VerticalPhotoContract {
 
     /**
      * 主界面view接口
      */
-    interface View extends BaseView<PendingScanPresenter> {
-        ScanRectView getRectView();
+    interface View extends BaseView<VerticalPhotoPresenter> {
+        VerticalRectView getRectView();
 
         SurfaceHolder getSurfaceHolder();
     }

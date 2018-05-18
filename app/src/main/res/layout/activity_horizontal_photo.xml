@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/surface_view_camera"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <com.lmj.customcamera.horizontal.HorizontalRectView
+        android:id="@+id/take_rect_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <ImageView
+        android:id="@+id/take_close"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="center"
+        android:src="@mipmap/icon_comom_off"/>
+
+    <TextView
+        android:id="@+id/take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/shape_circle_stroke_white"
+        android:textColor="@color/common_white"
+        android:text="@string/common_take_photo"
+        android:textSize="24dp"/>
+
+    <TextView
+        android:id="@+id/take_restart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/common_green"
+        android:text="@string/my_car_photo_restart"
+        android:textSize="15dp"/>
+</FrameLayout>

@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <com.lmj.customcamera.ScanRectView
+    <com.lmj.customcamera.vertical.VerticalRectView
         android:id="@+id/scan_rect_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

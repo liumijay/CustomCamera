@@ -1,4 +1,4 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.base;
 
 /**
  * 基础类按google 蓝皮案例走

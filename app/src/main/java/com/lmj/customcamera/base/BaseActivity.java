@@ -1,4 +1,4 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.base;
 
 import android.app.Activity;
 import android.os.Bundle;

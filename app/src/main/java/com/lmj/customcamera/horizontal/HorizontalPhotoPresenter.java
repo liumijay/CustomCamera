@@ -1,16 +1,15 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.horizontal;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.os.Environment;
 import android.view.SurfaceHolder;
-import android.widget.ImageView;
+import android.view.View;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -23,20 +22,17 @@ import java.util.List;
  * date  : 2018/3/19.
  */
 
-public class PendingScanPresenter implements PendingScanContract.Presenter {
-
+public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Presenter {
     public static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory() + "/CustomCamera/";
-    private PendingScanContract.View mView;
+
+    private HorizontalPhotoContract.View mView;
 
     private Activity mActivity;
     private Camera mCamera;
     // 定义传感器管理器
     private SensorManager sensorMag = null;
     //    是否自动对焦
-    private boolean isFocusing = false;
-    // 闪光灯默认关闭
-    private boolean flashlight = false;
-    private Camera.Size mSize;
+    private boolean isFinished = false;
     private SurfaceHolder mHolder;
     // 输出结果的先后顺序
     /**
@@ -44,11 +40,14 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
      */
     private Camera.AutoFocusCallback autoFocusCB = new Camera.AutoFocusCallback() {
         public void onAutoFocus(boolean success, Camera camera) {
-            isFocusing = false;
+            if (!success) {
+                camera.autoFocus(this);//如果失败，自动聚焦
+            }
         }
     };
+    private Bitmap mBitmap;
 
-    PendingScanPresenter(PendingScanContract.View view, Activity activity) {
+    HorizontalPhotoPresenter(HorizontalPhotoContract.View view, Activity activity) {
         mView = view;
         mActivity = activity;
     }
@@ -63,7 +62,7 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
 
 
 
-    public String saveJpeg(Bitmap bm) {
+    public void saveJpeg(Bitmap bm) {
         Bitmap dealBm = dealBitmap(bm);
 
         long dataTake = System.currentTimeMillis();
@@ -84,7 +83,10 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return TEMP_IMAGE_PATH + pngName;
+        Intent intent = new Intent();
+        intent.putExtra(HorizontalPhotoActivity.VIN_PHOTO_PATH, TEMP_IMAGE_PATH + pngName);
+        mActivity.setResult(HorizontalPhotoActivity.RESULT_OK, intent);
+        mActivity.finish();
     }
 
     @Override
@@ -93,24 +95,8 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
     }
 
     @Override
-    public void onFlashClick() {
-        if (mCamera == null) {
-            mCamera = Camera.open();
-        }
-        if (mCamera!=null){
-            Camera.Parameters params = mCamera.getParameters();
-
-            if (flashlight) {
-                // 关闭闪光灯
-                params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                flashlight = false;
-            } else {
-                // 打开闪光灯
-                params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                flashlight = true;
-            }
-            mCamera.setParameters(params);
-        }
+    public void onCloseClick() {
+       mActivity.finish();
     }
 
     @Override
@@ -121,15 +107,23 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
     }
 
     @Override
-    public void onTakePhotoClick(ImageView view) {
-        view.setEnabled(false);
-        takePhoto();
-        view.setEnabled(true);
+    public void onTakePhotoClick(View view) {
+        if (!isFinished){
+            view.setEnabled(false);
+            takePhoto();
+            isFinished = true;
+            mView.setTakeBtn(true);
+            view.setEnabled(true);
+        }else {
+           saveJpeg(mBitmap);
+        }
     }
 
     @Override
-    public void onBackClick() {
-        mActivity.finish();
+    public void onRestartClick() {
+        mCamera.startPreview();
+        isFinished = false;
+        mView.setTakeBtn(false);
     }
 
     private void takePhoto() {
@@ -143,7 +137,7 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
      */
     private void updateCameraParameters() {
         if (mCamera != null) {
-            ScanRectView rectView = mView.getRectView();
+            HorizontalRectView rectView = mView.getRectView();
             Camera.Parameters parameters = mCamera.getParameters();
             //先找最合适的照片尺寸
             List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
@@ -202,20 +196,16 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
      * @return 处理结束后的图片
      */
     private Bitmap dealBitmap(Bitmap bm) {
-        Bitmap dealBm;
-        ScanRectView rectView = mView.getRectView();
+        HorizontalRectView rectView = mView.getRectView();
         //旋转90度
-        Matrix matrix = new Matrix();
-        matrix.reset();
-        matrix.postRotate(90);
-        dealBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
-        float scale = dealBm.getWidth() / (float) rectView.getWidth();
+
+        float scale = bm.getWidth() / (float) rectView.getWidth();
         int width = (int) (rectView.rectWidth * scale);
         int height = (int) (rectView.rectHeight * scale);
-        int left = (int) ( dealBm.getWidth()*rectView.leftRatio);
-        int top = (int) (dealBm.getHeight()*rectView.topRatio);
-        dealBm = Bitmap.createBitmap(dealBm,left,top , width, height);
-        return dealBm;
+        int left = (int) ( bm.getWidth()*rectView.leftRatio);
+        int top = (int) (bm.getHeight()*rectView.topRatio);
+        bm = Bitmap.createBitmap(bm,left,top , width, height);
+        return bm;
     }
 
     /**
@@ -243,7 +233,7 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             try {
-                ScanRectView rectView = mView.getRectView();
+                HorizontalRectView rectView = mView.getRectView();
                 mCamera = Camera.open();
                 updateCameraParameters();
                 //再调整SurfaceView 宽高，注意 调整宽高得在SurfaceView能获取宽高的时候
@@ -265,8 +255,6 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             try {
-                // 旋转镜头
-                mCamera.setDisplayOrientation(90);
                 mCamera.setPreviewDisplay(mHolder);
                 updateCameraParameters();
                 restartSensor();
@@ -284,14 +272,6 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
          */
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            if (flashlight) {
-                if (mCamera != null) {
-                    Camera.Parameters params = mCamera.getParameters();
-                    // 关闭闪光灯
-                    params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                }
-                flashlight = false;
-            }
             if (mCamera != null) {
                 mCamera.setPreviewCallback(null);
                 mCamera.stopPreview();
@@ -308,7 +288,7 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
 
         // 获取系统传感器管理器
         if (sensorMag == null) {
-            sensorMag = (SensorManager) mActivity.getSystemService(PendingScanActivity.SENSOR_SERVICE);
+            sensorMag = (SensorManager) mActivity.getSystemService(HorizontalPhotoActivity.SENSOR_SERVICE);
         }
 
     }
@@ -327,13 +307,9 @@ public class PendingScanPresenter implements PendingScanContract.Presenter {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             if (null != data && data.length > 0) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);//data是字节数据，将其解析成位图
+                //data是字节数据，将其解析成位图
+                mBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 mCamera.stopPreview();
-                String imgPath = saveJpeg(bitmap);
-                Intent intent = new Intent();
-                intent.putExtra(PendingScanActivity.VIN_PHOTO_PATH, imgPath);
-                mActivity.setResult(PendingScanActivity.RESULT_OK, intent);
-                mActivity.finish();
             }
         }
     }

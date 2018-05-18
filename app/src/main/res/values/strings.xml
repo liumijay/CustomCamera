@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CustomCamera</string>
+    <string name="common_finish">完成</string>
+    <string name="common_take_photo">拍照</string>
+    <string name="my_car_photo_restart">重新拍照</string>
+    <string name="my_car_photo_ready">请放正凭证，并调整好光线</string>
+    <string name="my_car_photo_success">拍摄成功</string>
 </resources>

@@ -9,12 +9,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.lmj.customcamera.horizontal.HorizontalPhotoActivity;
+import com.lmj.customcamera.vertical.VerticalPhotoActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CAMERA = 666;
     ImageView mImageView;
-    Button mPhotoBtn;
+    Button mVerticalPhotoBtn;
+    Button mHorizontalPhotoBtn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,14 +29,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void setViews() {
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mPhotoBtn = (Button) findViewById(R.id.start_photo);
+        mVerticalPhotoBtn = (Button) findViewById(R.id.start_vertical_photo);
+        mHorizontalPhotoBtn = (Button) findViewById(R.id.start_horizontal_photo);
     }
 
     private void setListeners() {
-        mPhotoBtn.setOnClickListener(new View.OnClickListener() {
+        mVerticalPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, PendingScanActivity.class);
+                Intent intent = new Intent(MainActivity.this, VerticalPhotoActivity.class);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        });
+        mHorizontalPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HorizontalPhotoActivity.class);
                 startActivityForResult(intent, REQUEST_CAMERA);
             }
         });
@@ -43,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null && requestCode == REQUEST_CAMERA) {
-            String photoPath = data.getStringExtra(PendingScanActivity.VIN_PHOTO_PATH);
+            String photoPath = data.getStringExtra(VerticalPhotoActivity.VIN_PHOTO_PATH);
             Glide.with(this).load(photoPath).into(mImageView);
         }
     }

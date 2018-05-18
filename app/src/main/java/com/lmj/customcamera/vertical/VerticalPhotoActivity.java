@@ -1,4 +1,4 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.vertical;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -10,12 +10,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.lmj.customcamera.R;
+import com.lmj.customcamera.base.BaseActivity;
+
 /**
  * author: lmj
  * date  : 2018/3/19.
  */
 
-public class PendingScanActivity extends BaseActivity<PendingScanPresenter> implements PendingScanContract.View {
+public class VerticalPhotoActivity extends BaseActivity<VerticalPhotoPresenter> implements VerticalPhotoContract.View {
 
     public static String VIN_PHOTO_PATH = "VIN_PHOTO_PATH";
     //获取相机权限
@@ -29,16 +32,16 @@ public class PendingScanActivity extends BaseActivity<PendingScanPresenter> impl
     //    闪关灯按钮
     ImageView mFlashBtn;
     //   遮罩层
-    ScanRectView mRectView;
+    VerticalRectView mRectView;
 
     @Override
-    public void setPresenter(PendingScanPresenter presenter) {
+    public void setPresenter(VerticalPhotoPresenter presenter) {
 
     }
 
     @Override
     protected int provideContentViewId() {
-        return R.layout.activity_pending_scan;
+        return R.layout.activity_vertical_photo;
     }
 
     @Override
@@ -47,8 +50,8 @@ public class PendingScanActivity extends BaseActivity<PendingScanPresenter> impl
         mPhotoBtn = (ImageView) findViewById(R.id.scan_photo);
         mBackBtn = (ImageView) findViewById(R.id.scan_back);
         mFlashBtn = (ImageView) findViewById(R.id.scan_flash);
-        mRectView = (ScanRectView) findViewById(R.id.scan_rect_view);
-        mPresenter = new PendingScanPresenter(this, this);
+        mRectView = (VerticalRectView) findViewById(R.id.scan_rect_view);
+        mPresenter = new VerticalPhotoPresenter(this, this);
         int checkCallPhonePermission = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA);
         if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA}, GET_CAMERA_STATE);
@@ -100,7 +103,7 @@ public class PendingScanActivity extends BaseActivity<PendingScanPresenter> impl
     }
 
     @Override
-    public ScanRectView getRectView() {
+    public VerticalRectView getRectView() {
         return mRectView;
     }
 
