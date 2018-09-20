@@ -15,6 +15,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -141,55 +144,50 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
             Camera.Parameters parameters = mCamera.getParameters();
             //先找最合适的照片尺寸
             List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
-            Camera.Size pictureSize = getOptimalPreviewSize(pictureSizes, rectView.heightScreen, rectView.widthScreen);
+            Camera.Size pictureSize = getOptimalSize(pictureSizes, rectView.heightScreen, rectView.widthScreen);
             parameters.setPictureSize(pictureSize.width, pictureSize.height);
 
             //再找最合适的预览尺寸
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size size = getOptimalPreviewSize(sizes, pictureSize.width, pictureSize.height);
+            Camera.Size size = getOptimalSize(sizes, pictureSize.width, pictureSize.height);
             parameters.setPreviewSize(size.width, size.height);
             mCamera.setParameters(parameters);
 
         }
     }
 
-    /**
-     * 获取最适合屏幕的照片 尺寸
-     */
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) w / h;
-        if (sizes == null)
-            return null;
+    private Camera.Size getOptimalSize( List<Camera.Size> sizes,int w,int h) {
+        Camera.Size pictureSize = sizes.get(0);
+        List<Camera.Size> candidates = new ArrayList<>();
 
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-
-        // Try to find an mSize match aspect ratio and mSize
         for (Camera.Size size : sizes) {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-                continue;
-            if (Math.abs(size.height - h) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - h);
+            if (size.width >= w && size.height >= h && size.width * h == size.height * w) {
+                // 比例相同
+                candidates.add(size);
+            } else if (size.height >= w && size.width >= h && size.width * w == size.height * h) {
+                // 反比例
+                candidates.add(size);
+            }
+        }
+        if (!candidates.isEmpty()) {
+            return Collections.min(candidates, sizeComparator);
+        }
+
+        for (Camera.Size size : sizes) {
+            if (size.width > w && size.height > h) {
+                return size;
             }
         }
 
-        // Cannot find the one match the aspect ratio, ignore the requirement
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - h) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - h);
-                }
-            }
-        }
-        return optimalSize;
+        return pictureSize;
     }
 
-
+    private Comparator<Camera.Size> sizeComparator = new Comparator<Camera.Size>() {
+        @Override
+        public int compare(Camera.Size lhs, Camera.Size rhs) {
+            return Long.signum((long) lhs.width * lhs.height - (long) rhs.width * rhs.height);
+        }
+    };
     /**
      * 对照片进行旋转,剪切处理
      *
@@ -256,7 +254,6 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             try {
                 mCamera.setPreviewDisplay(mHolder);
-                updateCameraParameters();
                 restartSensor();
                 mCamera.startPreview();
                 // 开始预览
