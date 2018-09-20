@@ -46,11 +46,11 @@ public class VerticalPhotoActivity extends BaseActivity<VerticalPhotoPresenter> 
 
     @Override
     protected void init() {
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface_view_camera);
-        mPhotoBtn = (ImageView) findViewById(R.id.scan_photo);
-        mBackBtn = (ImageView) findViewById(R.id.scan_back);
-        mFlashBtn = (ImageView) findViewById(R.id.scan_flash);
-        mRectView = (VerticalRectView) findViewById(R.id.scan_rect_view);
+        mSurfaceView = findViewById(R.id.surface_view_camera);
+        mPhotoBtn = findViewById(R.id.scan_photo);
+        mBackBtn = findViewById(R.id.scan_back);
+        mFlashBtn = findViewById(R.id.scan_flash);
+        mRectView = findViewById(R.id.scan_rect_view);
         mPresenter = new VerticalPhotoPresenter(this, this);
         int checkCallPhonePermission = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA);
         if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {

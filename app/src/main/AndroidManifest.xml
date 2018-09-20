@@ -25,7 +25,7 @@
         <activity android:name=".horizontal.HorizontalPhotoActivity"
                   android:theme="@style/NoTitle_FullScreen"
                   android:screenOrientation="landscape"/>
-"
+
     </application>
 
 </manifest>

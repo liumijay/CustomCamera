@@ -50,15 +50,15 @@ public class HorizontalPhotoActivity extends BaseActivity<HorizontalPhotoPresent
 
     @Override
     protected void init() {
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface_view_camera);
+        mSurfaceView = findViewById(R.id.surface_view_camera);
         //   遮罩层
-        mRectView = (HorizontalRectView) findViewById(R.id.take_rect_view);
+        mRectView = findViewById(R.id.take_rect_view);
         //拍照/完成
-        mTakeBtn = (TextView) findViewById(R.id.take_photo);
+        mTakeBtn = findViewById(R.id.take_photo);
         //重拍
-        mRestartBtn = (TextView) findViewById(R.id.take_restart);
+        mRestartBtn = findViewById(R.id.take_restart);
         //     关闭
-        mCloseBtn = (ImageView) findViewById(R.id.take_close);
+        mCloseBtn = findViewById(R.id.take_close);
         mPresenter = new HorizontalPhotoPresenter(this, this);
         int checkCallPhonePermission = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA);
         if (checkCallPhonePermission != PackageManager.PERMISSION_GRANTED) {
