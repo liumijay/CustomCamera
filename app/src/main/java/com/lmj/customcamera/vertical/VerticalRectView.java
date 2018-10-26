@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.lmj.customcamera.R;
 
@@ -45,9 +46,16 @@ public class VerticalRectView extends AppCompatImageView {
     public VerticalRectView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mMetrics = context.getResources().getDisplayMetrics();
-        widthScreen = mMetrics.widthPixels;
-        heightScreen = mMetrics.heightPixels;
-
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        if (wm!=null){
+            wm.getDefaultDisplay().getMetrics(dm);
+            widthScreen = dm.widthPixels;
+            heightScreen = dm.heightPixels;
+        }else {
+            widthScreen = mMetrics.widthPixels;
+            heightScreen = mMetrics.heightPixels;
+        }
         initPaint();
     }
 
