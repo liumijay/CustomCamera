@@ -57,6 +57,7 @@ public class VerticalRectView extends AppCompatImageView {
             heightScreen = mMetrics.heightPixels;
         }
         initPaint();
+        initSize();
     }
 
     private void initPaint() {
@@ -76,6 +77,10 @@ public class VerticalRectView extends AppCompatImageView {
         mTextPaint.setColor(getResources().getColor(R.color.common_white));
         mTextPaint.setTextSize(dip2px(15));
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+
+    }
+
+    private void initSize(){
         topOffset = (int) (heightScreen * topRatio);
         leftOffset = (int) (widthScreen * leftRatio);
         rectHeight = dip2px(60);
@@ -119,5 +124,12 @@ public class VerticalRectView extends AppCompatImageView {
     int dip2px(float dipValue) {
         final float scale = mMetrics.density;
         return (int) (dipValue * scale + 0.5f);
+    }
+
+    public void resetSize(int width, int height) {
+        heightScreen = height;
+        widthScreen = width;
+        initSize();
+        invalidate();
     }
 }

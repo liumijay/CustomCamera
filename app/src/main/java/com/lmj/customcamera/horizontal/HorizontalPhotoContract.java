@@ -1,6 +1,7 @@
 package com.lmj.customcamera.horizontal;
 
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.lmj.customcamera.base.BasePresenter;
 import com.lmj.customcamera.base.BaseView;
@@ -19,7 +20,7 @@ public class HorizontalPhotoContract {
     interface View extends BaseView<HorizontalPhotoPresenter> {
         HorizontalRectView getRectView();
 
-        SurfaceHolder getSurfaceHolder();
+        SurfaceView getCameraView();
 
         void setTakeBtn(boolean isTook);
     }

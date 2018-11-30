@@ -10,7 +10,11 @@ import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.os.Environment;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.lmj.customcamera.CameraParamUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,6 +39,7 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
     // 闪光灯默认关闭
     private boolean flashlight = false;
     private SurfaceHolder mHolder;
+    private SurfaceView mSurfaceView;
     // 输出结果的先后顺序
     /**
      * AutoFocusCallback自动对焦
@@ -54,9 +59,9 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
 
     @Override
     public void start() {
-        mHolder = mView.getSurfaceHolder();
+        mSurfaceView = mView.getSurfaceView();
+        mHolder = mSurfaceView.getHolder();
         mHolder.setFormat(PixelFormat.TRANSPARENT);//translucent半透明 transparent透明
-        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mHolder.addCallback(new SurfaceCallBack());
     }
 
@@ -144,15 +149,17 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
         if (mCamera != null) {
             VerticalRectView rectView = mView.getRectView();
             Camera.Parameters parameters = mCamera.getParameters();
-            //先找最合适的照片尺寸
-            List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
-            Camera.Size pictureSize = getOptimalPreviewSize(pictureSizes, rectView.heightScreen, rectView.widthScreen);
-            parameters.setPictureSize(pictureSize.width, pictureSize.height);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mSurfaceView.getWidth(), mSurfaceView.getHeight());
+            rectView.setLayoutParams(params);
+            rectView.resetSize(mSurfaceView.getWidth(), mSurfaceView.getHeight());
 
-            //再找最合适的预览尺寸
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size size = getOptimalPreviewSize(sizes, pictureSize.width, pictureSize.height);
-            parameters.setPreviewSize(size.width, size.height);
+            float screenProp = (float) rectView.heightScreen / rectView.widthScreen;
+            Camera.Size previewSize = CameraParamUtil.getInstance().getPreviewSize(parameters
+                    .getSupportedPreviewSizes(), 1000, screenProp);
+            Camera.Size pictureSize = CameraParamUtil.getInstance().getPictureSize(parameters
+                    .getSupportedPictureSizes(), 1200, screenProp);
+            parameters.setPreviewSize(previewSize.width, previewSize.height);
+            parameters.setPictureSize(pictureSize.width, pictureSize.height);
             mCamera.setParameters(parameters);
 
         }

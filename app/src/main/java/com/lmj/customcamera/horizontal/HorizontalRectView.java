@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.lmj.customcamera.R;
@@ -58,6 +59,7 @@ public class HorizontalRectView extends AppCompatImageView {
             heightScreen = mMetrics.heightPixels;
         }
         initPaint();
+        initSize();
     }
 
     private void initPaint() {
@@ -78,6 +80,10 @@ public class HorizontalRectView extends AppCompatImageView {
         mTextPaint.setColor(getResources().getColor(R.color.common_white));
         mTextPaint.setTextSize(dip2px(15));
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+
+    }
+
+    private void initSize(){
         topOffset = (int) (heightScreen * topRatio);
         leftOffset = (int) (widthScreen * leftRatio);
         rectHeight = heightScreen - 2 * topOffset;
@@ -121,5 +127,17 @@ public class HorizontalRectView extends AppCompatImageView {
     int dip2px(float dipValue) {
         final float scale = mMetrics.density;
         return (int) (dipValue * scale + 0.5f);
+    }
+
+    public void resetSize(int width, int height) {
+        heightScreen = height;
+        widthScreen = width;
+        initSize();
+        invalidate();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return false;
     }
 }

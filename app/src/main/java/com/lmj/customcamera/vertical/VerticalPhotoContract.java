@@ -1,6 +1,7 @@
 package com.lmj.customcamera.vertical;
 
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.widget.ImageView;
 
 import com.lmj.customcamera.base.BasePresenter;
@@ -19,7 +20,7 @@ public class VerticalPhotoContract {
     interface View extends BaseView<VerticalPhotoPresenter> {
         VerticalRectView getRectView();
 
-        SurfaceHolder getSurfaceHolder();
+        SurfaceView getSurfaceView();
     }
 
     /**

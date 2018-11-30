@@ -9,7 +9,11 @@ import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.os.Environment;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
+
+import com.lmj.customcamera.CameraParamUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,6 +40,7 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
     private SensorManager sensorMag = null;
     //    是否自动对焦
     private boolean isFinished = false;
+    private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
     // 输出结果的先后顺序
     /**
@@ -57,12 +62,11 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
 
     @Override
     public void start() {
-        mHolder = mView.getSurfaceHolder();
+        mSurfaceView = mView.getCameraView();
+        mHolder = mSurfaceView.getHolder();
         mHolder.setFormat(PixelFormat.TRANSPARENT);//translucent半透明 transparent透明
-        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mHolder.addCallback(new SurfaceCallBack());
     }
-
 
 
     public void saveJpeg(Bitmap bm) {
@@ -99,7 +103,7 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
 
     @Override
     public void onCloseClick() {
-       mActivity.finish();
+        mActivity.finish();
     }
 
     @Override
@@ -111,14 +115,14 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
 
     @Override
     public void onTakePhotoClick(View view) {
-        if (!isFinished){
+        if (!isFinished) {
             view.setEnabled(false);
             takePhoto();
             isFinished = true;
             mView.setTakeBtn(true);
             view.setEnabled(true);
-        }else {
-           saveJpeg(mBitmap);
+        } else {
+            saveJpeg(mBitmap);
         }
     }
 
@@ -142,21 +146,24 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
         if (mCamera != null) {
             HorizontalRectView rectView = mView.getRectView();
             Camera.Parameters parameters = mCamera.getParameters();
-            //先找最合适的照片尺寸
-            List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
-            Camera.Size pictureSize = getOptimalSize(pictureSizes, rectView.heightScreen, rectView.widthScreen);
-            parameters.setPictureSize(pictureSize.width, pictureSize.height);
 
-            //再找最合适的预览尺寸
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size size = getOptimalSize(sizes, pictureSize.width, pictureSize.height);
-            parameters.setPreviewSize(size.width, size.height);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mSurfaceView.getWidth(), mSurfaceView.getHeight());
+            rectView.setLayoutParams(params);
+            rectView.resetSize(mSurfaceView.getWidth(), mSurfaceView.getHeight());
+
+            float screenProp = (float) rectView.widthScreen / rectView.heightScreen;
+            Camera.Size previewSize = CameraParamUtil.getInstance().getPreviewSize(parameters
+                    .getSupportedPreviewSizes(), 1000, screenProp);
+            Camera.Size pictureSize = CameraParamUtil.getInstance().getPictureSize(parameters
+                    .getSupportedPictureSizes(), 1200, screenProp);
+            parameters.setPreviewSize(previewSize.width, previewSize.height);
+            parameters.setPictureSize(pictureSize.width, pictureSize.height);
             mCamera.setParameters(parameters);
 
         }
     }
 
-    private Camera.Size getOptimalSize( List<Camera.Size> sizes,int w,int h) {
+    private Camera.Size getOptimalSize(List<Camera.Size> sizes, int w, int h) {
         Camera.Size pictureSize = sizes.get(0);
         List<Camera.Size> candidates = new ArrayList<>();
 
@@ -188,6 +195,7 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
             return Long.signum((long) lhs.width * lhs.height - (long) rhs.width * rhs.height);
         }
     };
+
     /**
      * 对照片进行旋转,剪切处理
      *
@@ -200,9 +208,9 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
         float scale = bm.getWidth() / (float) rectView.getWidth();
         int width = (int) (rectView.rectWidth * scale);
         int height = (int) (rectView.rectHeight * scale);
-        int left = (int) ( bm.getWidth()*rectView.leftRatio);
-        int top = (int) (bm.getHeight()*rectView.topRatio);
-        bm = Bitmap.createBitmap(bm,left,top , width, height);
+        int left = (int) (bm.getWidth() * rectView.leftRatio);
+        int top = (int) (bm.getHeight() * rectView.topRatio);
+        bm = Bitmap.createBitmap(bm, left, top, width, height);
         return bm;
     }
 
@@ -289,16 +297,18 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
         }
 
     }
-    public  File getFile(String dirname,String filename){
+
+    public File getFile(String dirname, String filename) {
         File file = new File(dirname);
-        if (!file.exists()){
+        if (!file.exists()) {
             //要点！
             file.mkdirs();
         }
-        File tempFile = new File(file,filename);
+        File tempFile = new File(file, filename);
         return tempFile;
 
     }
+
     private class MyPictureCallback implements Camera.PictureCallback {
 
         @Override

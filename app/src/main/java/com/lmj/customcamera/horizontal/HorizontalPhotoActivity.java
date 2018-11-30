@@ -6,7 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.SurfaceHolder;
+
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -109,8 +109,8 @@ public class HorizontalPhotoActivity extends BaseActivity<HorizontalPhotoPresent
     }
 
     @Override
-    public SurfaceHolder getSurfaceHolder() {
-        return mSurfaceView.getHolder();
+    public SurfaceView getCameraView() {
+        return mSurfaceView;
     }
 
     @Override

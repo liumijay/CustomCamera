@@ -108,8 +108,8 @@ public class VerticalPhotoActivity extends BaseActivity<VerticalPhotoPresenter> 
     }
 
     @Override
-    public SurfaceHolder getSurfaceHolder() {
-        return mSurfaceView.getHolder();
+    public SurfaceView getSurfaceView() {
+        return mSurfaceView;
     }
 
     @Override
