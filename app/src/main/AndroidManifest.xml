@@ -21,10 +21,8 @@
         </activity>
 
         <activity android:name=".vertical.VerticalPhotoActivity"
-                  android:theme="@style/NoTitle_FullScreen"
                   android:screenOrientation="portrait"/>
         <activity android:name=".horizontal.HorizontalPhotoActivity"
-                  android:theme="@style/NoTitle_FullScreen"
                   android:screenOrientation="landscape"/>
 
     </application>
