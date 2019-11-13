@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.lmj.customcamera">
+    package="com.lmj.customcamera">
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
+
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".vertical.VerticalPhotoActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".horizontal.HorizontalPhotoActivity"
-                  android:screenOrientation="landscape"/>
+        <activity
+            android:name=".vertical.VerticalPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".horizontal.HorizontalPhotoActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".auto.CameraActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     </application>
 

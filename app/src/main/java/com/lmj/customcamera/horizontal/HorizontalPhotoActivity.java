@@ -31,7 +31,7 @@ public class HorizontalPhotoActivity extends BaseActivity<HorizontalPhotoPresent
     //重拍
     TextView mRestartBtn;
 
-    public static String VIN_PHOTO_PATH = "VIN_PHOTO_PATH";
+    public static String PHOTO_PATH = "PHOTO_PATH";
     //获取相机权限
     public static final int GET_CAMERA_STATE = 1002;
     //startActivityForResult的值

@@ -5,4 +5,5 @@
     <string name="my_car_photo_restart">重新拍照</string>
     <string name="my_car_photo_ready">请放正凭证，并调整好光线</string>
     <string name="my_car_photo_success">拍摄成功</string>
+    <string name="camera_permission_required">相机权限未开启！</string>
 </resources>

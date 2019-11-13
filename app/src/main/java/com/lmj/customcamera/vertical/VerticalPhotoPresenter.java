@@ -8,13 +8,12 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.SensorManager;
-import android.os.Environment;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.lmj.customcamera.CameraParamUtil;
+import com.lmj.customcamera.util.CameraParamUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,7 +28,6 @@ import java.util.List;
 
 public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
 
-    public static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory() + "/CustomCamera/";
     private VerticalPhotoContract.View mView;
 
     private Activity mActivity;
@@ -73,7 +71,7 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
         long dataTake = System.currentTimeMillis();
         String pngName = dataTake + ".png";
 
-        File jpegFile = getFile(TEMP_IMAGE_PATH, pngName);
+        File jpegFile = getFile(CameraParamUtil.TEMP_IMAGE_PATH, pngName);
         try {
             FileOutputStream fos = new FileOutputStream(jpegFile);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -88,7 +86,7 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return TEMP_IMAGE_PATH + pngName;
+        return CameraParamUtil.TEMP_IMAGE_PATH + pngName;
     }
 
     @Override
@@ -161,7 +159,6 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
             parameters.setPreviewSize(previewSize.width, previewSize.height);
             parameters.setPictureSize(pictureSize.width, pictureSize.height);
             mCamera.setParameters(parameters);
-
         }
     }
 
@@ -337,7 +334,7 @@ public class VerticalPhotoPresenter implements VerticalPhotoContract.Presenter {
                 mCamera.stopPreview();
                 String imgPath = saveJpeg(bitmap);
                 Intent intent = new Intent();
-                intent.putExtra(VerticalPhotoActivity.VIN_PHOTO_PATH, imgPath);
+                intent.putExtra(CameraParamUtil.IMAGE_PATH, imgPath);
                 mActivity.setResult(VerticalPhotoActivity.RESULT_OK, intent);
                 mActivity.finish();
             }

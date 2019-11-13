@@ -3,6 +3,7 @@ package com.lmj.customcamera;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lmj.customcamera.auto.CameraActivity;
 import com.lmj.customcamera.horizontal.HorizontalPhotoActivity;
+import com.lmj.customcamera.util.CameraParamUtil;
 import com.lmj.customcamera.vertical.VerticalPhotoActivity;
 
 import java.util.ArrayList;
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView mImageView;
     Button mVerticalPhotoBtn;
     Button mHorizontalPhotoBtn;
+    Button mRectPhotoBtn;
+    Button mNonePhotoBtn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setViews() {
-        mImageView = (ImageView) findViewById(R.id.imageView);
-        mVerticalPhotoBtn = (Button) findViewById(R.id.start_vertical_photo);
-        mHorizontalPhotoBtn = (Button) findViewById(R.id.start_horizontal_photo);
+        mImageView = findViewById(R.id.imageView);
+        mVerticalPhotoBtn = findViewById(R.id.start_vertical_photo);
+        mHorizontalPhotoBtn = findViewById(R.id.start_horizontal_photo);
+        mRectPhotoBtn = findViewById(R.id.rect);
+        mNonePhotoBtn = findViewById(R.id.none);
     }
 
     private void setListeners() {
@@ -59,13 +66,30 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CAMERA);
             }
         });
+
+        mRectPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,CameraActivity.CONTENT_TYPE_RECT);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        });
+
+        mNonePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null && requestCode == REQUEST_CAMERA) {
-            String photoPath = data.getStringExtra(VerticalPhotoActivity.VIN_PHOTO_PATH);
+            String photoPath = data.getStringExtra(CameraParamUtil.IMAGE_PATH);
             Glide.with(this).load(photoPath).into(mImageView);
         }
     }

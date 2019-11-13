@@ -13,7 +13,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.lmj.customcamera.CameraParamUtil;
+import com.lmj.customcamera.util.CameraParamUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,7 +30,6 @@ import java.util.List;
  */
 
 public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Presenter {
-    public static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory() + "/CustomCamera/";
 
     private HorizontalPhotoContract.View mView;
 
@@ -75,7 +74,7 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
         long dataTake = System.currentTimeMillis();
         String pngName = dataTake + ".png";
 
-        File jpegFile = getFile(TEMP_IMAGE_PATH, pngName);
+        File jpegFile = getFile(CameraParamUtil.TEMP_IMAGE_PATH, pngName);
         try {
             FileOutputStream fos = new FileOutputStream(jpegFile);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -91,7 +90,7 @@ public class HorizontalPhotoPresenter implements HorizontalPhotoContract.Present
             e.printStackTrace();
         }
         Intent intent = new Intent();
-        intent.putExtra(HorizontalPhotoActivity.VIN_PHOTO_PATH, TEMP_IMAGE_PATH + pngName);
+        intent.putExtra(CameraParamUtil.IMAGE_PATH, CameraParamUtil.TEMP_IMAGE_PATH + pngName);
         mActivity.setResult(HorizontalPhotoActivity.RESULT_OK, intent);
         mActivity.finish();
     }

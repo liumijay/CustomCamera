@@ -1,7 +1,8 @@
-package com.lmj.customcamera;
+package com.lmj.customcamera.util;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -11,7 +12,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CameraParamUtil {
-    private static final String TAG = "JCameraView";
+    private static final String TAG = "CustomCamera";
+    public static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory() + "/CustomCamera/";
+    public static String IMAGE_PATH = "IMAGE_PATH";
+
     private CameraSizeComparator sizeComparator = new CameraSizeComparator();
     private static CameraParamUtil cameraParamUtil = null;
 
